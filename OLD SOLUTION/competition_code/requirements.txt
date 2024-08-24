@@ -1,0 +1,6 @@
+carla==0.9.12
+gymnasium==0.28.1
+numpy==1.24.4
+Pillow==9.5.0
+pygame==2.5.2
+simple_pid==2.0.0

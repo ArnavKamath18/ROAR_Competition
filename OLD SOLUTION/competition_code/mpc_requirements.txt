@@ -1,0 +1,9 @@
+carla==0.9.12
+commonroad_vehicle_models==3.0.2
+gymnasium==0.28.1
+numpy==1.24.4
+Pillow==9.5.0
+pygame==2.5.2
+scipy==1.10.1
+Shapely==2.0.3
+simple_pid==2.0.0
