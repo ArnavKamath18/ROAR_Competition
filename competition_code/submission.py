@@ -44,7 +44,7 @@ class RoarCompetitionSolution:
         self.occupancy_map_sensor = occupancy_map_sensor
         self.collision_sensor = collision_sensor
         self.ref_line = np.genfromtxt('traj_race_cl_mintime.csv', delimiter=';', skip_header=3)
-        self.pid_longitudinal = PID(1, 0.1, 0.05, setpoint=0)
+        self.pid_longitudinal = PID(0.39, 0.1, 0.0699, setpoint=0)
         self.pid_longitudinal.output_limits = (-1, 1)
 
         self.pure_pursuit = PurePursuit(np.array([waypoint.location for waypoint in self.maneuverable_waypoints]))
@@ -101,7 +101,16 @@ class RoarCompetitionSolution:
         goalpt, lastidx, steer_control = self.pure_pursuit.step(vehicle_location[:2], vehicle_rotation[2], L, self.current_waypoint_idx, vehicle_velocity_norm)
        
         self.pid_longitudinal.setpoint = self.ref_line[closest_idx][5] + 10
-        throttle_control = self.pid_longitudinal(vehicle_velocity_norm, dt=0.05)
+        if self.current_waypoint_idx <= 100:
+            throttle_control = 1.0
+        else:
+            throttle_control = self.pid_longitudinal(vehicle_velocity_norm,dt=0.05)
+            if throttle_control >= 0.8:
+                throttle_control = 1.0
+            elif throttle_control >= 0.5:
+                throttle_control += 0.5 * ((throttle_control - 0.5) / 0.3)
+            elif throttle_control <= -0.4:
+                throttle_control += 0.3 * ((0.4 + throttle_control) / -0.6)
 
         control = {
             "throttle": np.clip(throttle_control, 0.0, 1.0),
